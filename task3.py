@@ -1,34 +1,33 @@
-with open('1.txt', encoding='utf-8') as file_1:
-    lines_1 = file_1.read().splitlines()
-    f_1 = {
-        'file_title': '1.txt',
-        'length': str(len(lines_1)),
-        'content': lines_1
-    }
+import os
 
-with open('2.txt', encoding='utf-8') as file_2:
-    lines_2 = file_2.read().splitlines()
-    f_2 = {
-        'file_title': '2.txt',
-        'length': str(len(lines_2)),
-        'content': lines_2
-    }
+def make_files_dict(folder_path):
+    all_items = os.listdir(folder_path)
+    all_files_list = []
+    for file_name in all_items:
+        file_path = os.path.join(folder_path, file_name)
+        with open(file_path, encoding='utf-8') as f:
+            f.seek(0)
+            lines = f.read().splitlines()
+            file_dict = {
+                'file_title': file_name,
+                'length': str(len(lines)),
+                'content': lines
+            }
+        all_files_list.append(file_dict)
+    return all_files_list
 
-with open('3.txt', encoding='utf-8') as file_3:
-    lines_3 = file_3.read().splitlines()
-    f_3 = {
-        'file_title': '3.txt',
-        'length': str(len(lines_3)),
-        'content': lines_3
-    }
+def create_common_file(folder_path, new_file_name):
+    all_files_list = make_files_dict(folder_path)
+    all_files_list.sort(key=lambda x: x['length'])
+    
+    with open(new_file_name, 'a', encoding='utf-8') as f:
+        for file in all_files_list:
+            f.write(f"{file['file_title']}\n")
+            f.write(f"{file['length']}\n")
+            f.write(f"{'\n'.join(file['content'])}\n")
+            f.flush()
+    print(f'Файл {new_file_name} готов!')
 
-files_list = [f_1, f_2, f_3]
-files_list.sort(key=lambda x: x['length'])
-
-with open('task3.txt', 'a', encoding='utf-8') as file_4:
-    for file in files_list:
-        file_4.write(f"{file['file_title']}\n")
-        file_4.write(f"{file['length']}\n")
-        file_4.write(f"{'\n'.join(file['content'])}")
-        file_4.flush()
-
+folder_path = "to_proccess"
+new_file_name = 'task3.txt'
+create_common_file(folder_path, new_file_name)
